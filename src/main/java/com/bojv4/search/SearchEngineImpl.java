@@ -63,15 +63,18 @@ public class SearchEngineImpl implements SearchEngine.Iface{
 
     @Override
     public boolean index(Map<String, String> params) throws TException {
+        System.out.println("receive info======");
+        System.out.println(params.toString());
         String content = params.get("content");
         try{
             Document doc = new Document();
             doc.add(new StringField("title", params.get("title"), Field.Store.YES));
-            doc.add(new NumericDocValuesField("key", Integer.valueOf(params.get("key"))));
+            doc.add(new StringField("key", params.get("key"), Field.Store.YES));
             doc.add(new TextField("content", content, Field.Store.YES));
             writer.addDocument(doc);
             writer.commit();
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
         return true;
@@ -86,18 +89,26 @@ public class SearchEngineImpl implements SearchEngine.Iface{
             System.out.println(directory.toString());
             Analyzer analyzer = new StandardAnalyzer();
             QueryParser parser = new QueryParser("content", analyzer);
-            Query q = parser.parse("text");
+            Query q = parser.parse(query);
             TopDocs result = searcher.search(q, 100);
             ScoreDoc[] hits = result.scoreDocs;
             for (int i = 0; i < hits.length; i ++) {
                 Document hitDoc = searcher.doc(hits[i].doc);
                 System.out.println(hitDoc.get("title"));
+                String res = hitDoc.get("key");
+                if (res != null) {
+                    ans.add(res);
+                }
+                else{
+                    ans.add(hitDoc.get("title"));
+                }
             }
             searcherManager.release(searcher);
         } catch (Exception e) {
             System.out.println("Caught exception when search");
             System.out.println(e);
         }
+        System.out.println(ans);
         return ans;
     }
 }
