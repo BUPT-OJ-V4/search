@@ -45,8 +45,7 @@ public class SearchEngineImpl implements SearchEngine.Iface{
         config.setRAMBufferSizeMB(256.0);
         try {
             Properties properties = new Properties();
-            System.out.println("start init");
-            properties.load(SearchEngineImpl.class.getClassLoader().getResourceAsStream("conf/config.properties"));
+            properties.load(SearchEngineImpl.class.getClassLoader().getResourceAsStream("config.properties"));
             storage_dir = properties.getProperty("lucene.index");
             System.out.println("index===============" + storage_dir);
             directory = FSDirectory.open(Paths.get(storage_dir));

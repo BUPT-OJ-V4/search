@@ -6,12 +6,16 @@
 #########################################################################
 #!/bin/bash
 
-if [[ -f ./release ]]; then
+if [[ -x "release" ]]; then
+    echo "remove release"
     rm -rf ./release
 fi
+
+rm *.tar.gz
 
 mvn clean
 mvn package -U
 mkdir -p ./release
-mv ./target/search-server-1.0.jar ./release/
-mv src/main/resources/* ./release/
+cp -r src/main/resources/* ./release/
+cp -rf ./target/search-server-1.0.jar ./release/bin/
+tar -cvzf search-server.tar.gz ./release
